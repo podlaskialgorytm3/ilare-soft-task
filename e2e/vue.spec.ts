@@ -1,8 +1,11 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from "@playwright/test";
 
-// See here how to get started:
-// https://playwright.dev/docs/intro
-test('visits the app root url', async ({ page }) => {
-  await page.goto('/')
-  await expect(page.locator('h1')).toHaveText('You did it!')
-})
+test("detects outlier value from comma separated input", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByLabel("Liczby").fill("2,4,0,100,4,11,2602,36");
+  await page.getByRole("button", { name: "Wyszukaj" }).click();
+
+  await expect(page).toHaveURL(/\/wynik$/);
+  await expect(page.locator(".result-number")).toHaveText("11");
+});

@@ -1,35 +1,223 @@
-@import './base.css';
+@import "./base.css";
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  min-height: 100vh;
+  position: relative;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  isolation: isolate;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+#app::before,
+#app::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: -1;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+#app::before {
+  width: 16rem;
+  height: 16rem;
+  top: 8%;
+  right: 12%;
+  background: rgba(255, 168, 122, 0.25);
+  animation: drift-a 9s ease-in-out infinite;
+}
+
+#app::after {
+  width: 14rem;
+  height: 14rem;
+  left: 10%;
+  bottom: 7%;
+  background: rgba(103, 158, 235, 0.24);
+  animation: drift-b 11s ease-in-out infinite;
+}
+
+.screen {
+  min-height: calc(100vh - clamp(2.5rem, 8vw, 6rem));
+  display: grid;
+  place-items: center;
+}
+
+.panel {
+  width: min(46rem, 100%);
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 1.5rem;
+  box-shadow:
+    0 1rem 2.5rem -1.25rem var(--surface-shadow),
+    0 0.25rem 0.5rem rgba(255, 255, 255, 0.6) inset;
+  backdrop-filter: blur(8px);
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+  display: grid;
+  gap: 1rem;
+  animation: panel-in 420ms ease-out both;
+}
+
+.eyebrow {
+  font-family: "Space Mono", "Consolas", monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+h1 {
+  font-size: clamp(1.8rem, 4.6vw, 2.8rem);
+  line-height: 1.12;
+}
+
+.description {
+  color: var(--ink-muted);
+  max-width: 34rem;
+}
+
+.sample {
+  font-family: "Space Mono", "Consolas", monospace;
+  font-size: 0.95em;
+}
+
+.field-label {
+  font-weight: 600;
+}
+
+.numbers-input {
+  width: 100%;
+  border: 1px solid rgba(31, 45, 31, 0.24);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--ink-strong);
+  padding: 0.95rem 1rem;
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.numbers-input::placeholder {
+  color: rgba(53, 80, 63, 0.5);
+}
+
+.numbers-input:focus {
+  outline: none;
+  border-color: rgba(29, 106, 66, 0.66);
+  box-shadow: 0 0 0 4px rgba(29, 106, 66, 0.16);
+  transform: translateY(-1px);
+}
+
+.search-button,
+.secondary-button {
+  border: 0;
+  border-radius: 0.9rem;
+  padding: 0.9rem 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.search-button {
+  background: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: 0 0.8rem 1.4rem -0.9rem rgba(29, 106, 66, 0.6);
+}
+
+.search-button:hover,
+.search-button:focus-visible {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.secondary-button {
+  justify-self: start;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(29, 106, 66, 0.35);
+}
+
+.secondary-button:hover,
+.secondary-button:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(29, 106, 66, 0.56);
+}
+
+.error-message {
+  color: var(--danger);
+  font-size: 0.95rem;
+}
+
+.result-panel {
+  text-align: left;
+}
+
+.result-number {
+  font-family: "Space Mono", "Consolas", monospace;
+  font-size: clamp(2.6rem, 8vw, 4.5rem);
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.result-text,
+.source-preview {
+  color: var(--ink-muted);
+}
+
+.source-preview {
+  font-family: "Space Mono", "Consolas", monospace;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  word-break: break-word;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
+@keyframes drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0);
   }
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+  50% {
+    transform: translate(-9px, 10px);
+  }
+}
+
+@keyframes drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(7px, -9px);
+  }
+}
+
+@media (max-width: 640px) {
+  .panel {
+    border-radius: 1.15rem;
+    gap: 0.85rem;
+  }
+
+  .secondary-button {
+    width: 100%;
+    justify-self: stretch;
   }
 }

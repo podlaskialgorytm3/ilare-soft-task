@@ -1,67 +1,88 @@
-# .
+# Wykonanie zadania frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+## Cel aplikacji
 
-## Recommended IDE Setup
+Aplikacja wykrywa pojedynczą wartość odstającą pod względem parzystości w tablicy liczb całkowitych.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Zrealizowane wymagania
 
-## Recommended Browser Setup
+1. Aplikacja została wykonana w Vue 3 (Vite + TypeScript).
+2. Aplikacja ma 2 ekrany:
+   - ekran wejściowy z 1 inputem i 1 przyciskiem „Wyszukaj”,
+   - ekran wyniku prezentujący wykrytą wartość odstającą.
+3. Dodana została instrukcja uruchomienia.
+4. Logika została rozdzielona na warstwy (parser, algorytm, use-case), zgodnie z dobrymi praktykami.
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+## Opis działania
 
-## Type Support for `.vue` Imports in TS
+1. Użytkownik wpisuje liczby całkowite oddzielone przecinkami, np. `2,4,0,100,4,11,2602,36`.
+2. Po kliknięciu „Wyszukaj” dane są parsowane i walidowane.
+3. Use-case uruchamia algorytm wykrywania wartości odstającej.
+4. Następuje przejście na ekran wyniku, gdzie wyświetlana jest wykryta liczba.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## Implementacja algorytmu
 
-## Customize configuration
+Algorytm:
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+1. Pobiera 3 pierwsze liczby jako próbkę i ustala dominującą parzystość.
+2. Szuka liczby o przeciwnej parzystości w całym zbiorze.
+3. Zwraca wartość, jeśli jest dokładnie jedna; w przeciwnym razie zgłasza błąd walidacyjny.
 
-## Project Setup
+Złożoność obliczeniowa:
 
-```sh
+- czasowa: O(n)
+- pamięciowa: O(1)
+
+## Struktura rozwiązania
+
+- `src/domain/outlier/CsvIntegerParser.ts` - parsowanie i walidacja wejścia.
+- `src/domain/outlier/ParityOutlierFinder.ts` - algorytm wykrywania wartości odstającej.
+- `src/domain/outlier/DetectOutlierUseCase.ts` - orkiestracja parsera i algorytmu.
+- `src/stores/outlierDetection.ts` - stan aplikacji i obsługa błędów.
+- `src/views/InputView.vue` - ekran wejściowy.
+- `src/views/ResultView.vue` - ekran wyniku.
+
+## Testy
+
+Dodane testy jednostkowe obejmują:
+
+1. wykrycie jedynej liczby nieparzystej,
+2. wykrycie jedynej liczby parzystej,
+3. scenariusz z niejednoznacznym zbiorem,
+4. scenariusz z błędnym formatem wejścia.
+
+Plik testów:
+
+- `src/domain/__tests__/outlierDetection.spec.ts`
+
+## Instrukcja uruchomienia
+
+1. Instalacja zależności:
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+2. Uruchomienie aplikacji dewelopersko:
 
-```sh
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+3. Testy jednostkowe:
 
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
+```bash
 npm run test:unit
 ```
 
-### Run End-to-End Tests with [Playwright](https://playwright.dev)
+4. Build produkcyjny:
 
-```sh
-# Install browsers for the first run
-npx playwright install
-
-# When testing on CI, must build the project first
+```bash
 npm run build
-
-# Runs the end-to-end tests
-npm run test:e2e
-# Runs the tests only on Chromium
-npm run test:e2e -- --project=chromium
-# Runs the tests of a specific file
-npm run test:e2e -- tests/example.spec.ts
-# Runs the tests in debug mode
-npm run test:e2e -- --debug
 ```
+
+## Uwagi
+
+- Aplikacja obsługuje liczby ujemne.
+- Walidacja wymusza liczby całkowite i co najmniej 3 elementy.
+- W przypadku błędnych danych użytkownik dostaje czytelny komunikat.
